@@ -1,0 +1,57 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TypeDefinitions>
+    <ModuleTypes>
+      <ProbeActionModuleType ID="Custom.SCOMDB.Tasks.PA.Module" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element name="SQLScript" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="TimeoutSeconds" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="SQLScript" Selector="$Config/SQLScript$" ParameterType="string" />
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation>
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Custom.SCOMDB.Tasks.PA" TypeID="Windows!Microsoft.Windows.PowerShellProbe">
+                <ScriptName>QuerySCOMDB.ps1</ScriptName>
+                <ScriptBody>$IncludeFileContent/Scripts/QuerySCOMDB.ps1$</ScriptBody>
+                <Parameters>
+                  <Parameter>
+                    <Name>SQLScript</Name>
+                    <Value>$Config/SQLScript$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>SQLQueryTimeout</Name>
+                    <Value>$Config/TimeoutSeconds$</Value>
+                  </Parameter>
+                </Parameters>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Custom.SCOMDB.Tasks.PA" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.BaseData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+  </TypeDefinitions>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="Custom.SCOMDB.Tasks.PA.Module">
+          <Name>Custom SCOMDB Tasks Probe Action Module</Name>
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDB.Tasks.PA.Module" SubElementID="SQLScript">
+          <Name>SQL Script</Name>
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDB.Tasks.PA.Module" SubElementID="TimeoutSeconds">
+          <Name>Timeout in Seconds</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

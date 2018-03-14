@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ManagementPack SchemaVersion="2.0" ContentReadable="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Manifest>
+    <Identity>
+      <ID>Custom.SCOMDB.Tasks</ID>
+      <Version>1.0.0.7</Version>
+    </Identity>
+    <Name>Custom.SCOMDB.Tasks</Name>
+    <References>
+      <Reference Alias="SC">
+        <ID>Microsoft.SystemCenter.Library</ID>
+        <Version>7.0.8437.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Windows">
+        <ID>Microsoft.Windows.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System">
+        <ID>System.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+    </References>
+  </Manifest>
+  <TypeDefinitions>
+    <ModuleTypes>
+      <ProbeActionModuleType ID="Custom.SCOMDB.Tasks.PA.Module" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element name="SQLScript" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="TimeoutSeconds" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="SQLScript" Selector="$Config/SQLScript$" ParameterType="string" />
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation>
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Custom.SCOMDB.Tasks.PA" TypeID="Windows!Microsoft.Windows.PowerShellProbe">
+                <ScriptName>QuerySCOMDB.ps1</ScriptName>
+                <ScriptBody><![CDATA[#=================================================================
+# Author:           Jochen Renner
+# Script Name:      QuerySCOMDB.ps1
+# Date:             12.03.2018
+# Version:          1.0
+# Comment:          
+#==============================================================
+Param ([string]$SQLScript, [int]$SQLQueryTimeout)
+
+#Connect to the DB engine
+$DBServer = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\System Center\2010\Common\Database' -Name DatabaseServerName).DatabaseServerName
+$Database = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\System Center\2010\Common\Database' -Name DatabaseName).DatabaseName
+$connString = "Server=$DBServer;Integrated Security=true;Initial Catalog=$Database"
+
+$conn = New-Object System.Data.SqlClient.SqlConnection($connString)
+$conn.Open()
+
+#execute SQL Query
+$command = $conn.CreateCommand()
+$command.CommandText = $SQLScript
+$command.CommandTimeout = $SQLQueryTimeout
+$Reader = $command.ExecuteReader()
+$Datatable = New-Object System.Data.DataTable
+$Datatable.Load($Reader)
+
+#Close SQL Connection
+$conn.Close()
+
+#Create Output
+If ($Datatable -ne $null) 
+{
+	Write-Output $Datatable | ft -Wrap
+}
+else
+{
+	Write-Output "no output from Query"
+}
+]]></ScriptBody>
+                <Parameters>
+                  <Parameter>
+                    <Name>SQLScript</Name>
+                    <Value>$Config/SQLScript$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>SQLQueryTimeout</Name>
+                    <Value>$Config/TimeoutSeconds$</Value>
+                  </Parameter>
+                </Parameters>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Custom.SCOMDB.Tasks.PA" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.BaseData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Tasks>
+      <Task ID="Custom.SCOMDBTasks.1" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT CASE WHEN(GROUPING(CONVERT(VARCHAR(20), TimeSampled, 102)) = 1)   THEN 'All Days'   ELSE CONVERT(VARCHAR(20), TimeSampled, 102)   END AS DaySampled, COUNT(*) AS PerfInsertPerDay  FROM PerformanceDataAllView with (NOLOCK)  GROUP BY CONVERT(VARCHAR(20), TimeSampled, 102) WITH ROLLUP  ORDER BY DaySampled DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.2" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT TOP 20 pcv.ObjectName,  pcv.CounterName,  COUNT (pcv.countername) AS Total  FROM performancedataallview AS pdv, performancecounterview AS pcv  WHERE (pdv.performancesourceinternalid = pcv.performancesourceinternalid)  GROUP BY pcv.objectname, pcv.countername  ORDER BY COUNT (pcv.countername) DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.3" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT CASE WHEN(GROUPING(CONVERT(VARCHAR(20), TimeGenerated, 102)) = 1)  THEN 'All Days' ELSE CONVERT(VARCHAR(20), TimeGenerated, 102)  END AS DayGenerated, COUNT(*) AS StateChangesPerDay  FROM StateChangeEvent WITH (NOLOCK)  GROUP BY CONVERT(VARCHAR(20), TimeGenerated, 102) WITH ROLLUP  ORDER BY DayGenerated DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.4" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT DISTINCT TOP 50 count(sce.StateId) as StateChanges,  m.DisplayName as MonitorName,  m.Name as MonitorId,  mt.typename AS TargetClass  FROM StateChangeEvent sce with (nolock)  join state s with (nolock) on sce.StateId = s.StateId  join monitorview m with (nolock) on s.MonitorId = m.Id  join managedtype mt with (nolock) on m.TargetMonitoringClassId = mt.ManagedTypeId  where m.IsUnitMonitor = 1  -- Scoped to within last 7 days  AND sce.TimeGenerated &gt; dateadd(dd,-7,getutcdate())  group by m.DisplayName, m.Name,mt.typename  order by StateChanges desc</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.5" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>select distinct top 50 count(sce.StateId) as NumStateChanges,  bme.DisplayName AS ObjectName,  bme.Path,  m.DisplayName as MonitorDisplayName,  m.Name as MonitorIdName,  mt.typename AS TargetClass  from StateChangeEvent sce with (nolock)  join state s with (nolock) on sce.StateId = s.StateId  join BaseManagedEntity bme with (nolock) on s.BasemanagedEntityId = bme.BasemanagedEntityId  join MonitorView m with (nolock) on s.MonitorId = m.Id  join managedtype mt with (nolock) on m.TargetMonitoringClassId = mt.ManagedTypeId  where m.IsUnitMonitor = 1  -- Scoped to specific Monitor (remove the "--" below):  -- AND m.MonitorName like ('%HealthService%')  -- Scoped to specific Computer (remove the "--" below):  -- AND bme.Path like ('%sql%')  -- Scoped to within last 7 days  AND sce.TimeGenerated &gt; dateadd(dd,-7,getutcdate())  group by s.BasemanagedEntityId,bme.DisplayName,bme.Path,m.DisplayName,m.Name,mt.typename  order by NumStateChanges desc</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.6" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT  mv.DisplayName AS 'MonitorDisplayName', mv.Name AS 'MonitorName', bme.Path, bme.DisplayName, bme.FullName AS 'Target', s.LastModified AS 'StateLastModified' FROM State s JOIN BaseManagedEntity bme ON s.BaseManagedEntityId = bme.BaseManagedEntityId JOIN MonitorView mv ON mv.Id = s.MonitorId WHERE s.HealthState = 3 AND mv.IsUnitMonitor = 1 ORDER BY mv.DisplayName</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.7" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT TOP 1000  a2.name AS [tablename], (a1.reserved + ISNULL(a4.reserved,0))* 8 AS reserved,  a1.rows as row_count, a1.data * 8 AS data,  (CASE WHEN (a1.used + ISNULL(a4.used,0)) &gt; a1.data THEN (a1.used + ISNULL(a4.used,0)) - a1.data ELSE 0 END) * 8 AS index_size,  (CASE WHEN (a1.reserved + ISNULL(a4.reserved,0)) &gt; a1.used THEN (a1.reserved + ISNULL(a4.reserved,0)) - a1.used ELSE 0 END) * 8 AS unused,  (row_number() over(order by (a1.reserved + ISNULL(a4.reserved,0)) desc))%2 as l1,  a3.name AS [schemaname]  FROM (SELECT ps.object_id, SUM (CASE WHEN (ps.index_id &lt; 2) THEN row_count ELSE 0 END) AS [rows],  SUM (ps.reserved_page_count) AS reserved,  SUM (CASE WHEN (ps.index_id &lt; 2) THEN (ps.in_row_data_page_count + ps.lob_used_page_count + ps.row_overflow_used_page_count)  ELSE (ps.lob_used_page_count + ps.row_overflow_used_page_count) END ) AS data,  SUM (ps.used_page_count) AS used  FROM sys.dm_db_partition_stats ps  GROUP BY ps.object_id) AS a1  LEFT OUTER JOIN (SELECT it.parent_id,  SUM(ps.reserved_page_count) AS reserved,  SUM(ps.used_page_count) AS used  FROM sys.dm_db_partition_stats ps  INNER JOIN sys.internal_tables it ON (it.object_id = ps.object_id)  WHERE it.internal_type IN (202,204)  GROUP BY it.parent_id) AS a4 ON (a4.parent_id = a1.object_id)  INNER JOIN sys.all_objects a2  ON ( a1.object_id = a2.object_id )  INNER JOIN sys.schemas a3 ON (a2.schema_id = a3.schema_id)  WHERE a2.type &lt;&gt; N'S' and a2.type &lt;&gt; N'IT'</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.8" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>select a.FILEID,  [FILE_SIZE_MB]=convert(decimal(12,2),round(a.size/128.000,2)),  [SPACE_USED_MB]=convert(decimal(12,2),round(fileproperty(a.name,'SpaceUsed')/128.000,2)),  [FREE_SPACE_MB]=convert(decimal(12,2),round((a.size-fileproperty(a.name,'SpaceUsed'))/128.000,2)) ,  [GROWTH_MB]=convert(decimal(12,2),round(a.growth/128.000,2)),  NAME=left(a.NAME,15),  FILENAME=left(a.FILENAME,60)  from dbo.sysfiles a</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.9" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT CONVERT(VARCHAR(20), TimeAdded, 102) AS DayAdded, COUNT(*) AS NumAlertsPerDay  FROM Alert WITH (NOLOCK)  WHERE TimeRaised is not NULL  GROUP BY CONVERT(VARCHAR(20), TimeAdded, 102)  ORDER BY DayAdded DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.10" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT TOP 20 SUM(1) AS AlertCount,  AlertStringName AS 'AlertName',  AlertStringDescription AS 'Description',  Name,  MonitoringRuleId FROM Alertview WITH (NOLOCK)  WHERE TimeRaised is not NULL  GROUP BY AlertStringName, AlertStringDescription, Name, MonitoringRuleId  ORDER BY AlertCount DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.11" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT TOP 20 SUM(RepeatCount+1) AS RepeatCount,  AlertStringName as 'AlertName',  AlertStringDescription as 'Description',  Name,  MonitoringRuleId  FROM Alertview WITH (NOLOCK)  WHERE Timeraised is not NULL  GROUP BY AlertStringName, AlertStringDescription, Name, MonitoringRuleId  ORDER BY RepeatCount DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.12" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT TOP 20 SUM(RepeatCount+1) AS RepeatCount,  MonitoringObjectPath AS 'Path' FROM Alertview WITH (NOLOCK)  WHERE Timeraised is not NULL  GROUP BY MonitoringObjectPath  ORDER BY RepeatCount DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.13" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT TOP 20 SUM(1) AS AlertCount,  MonitoringObjectPath AS 'Path' FROM Alertview WITH (NOLOCK)  WHERE TimeRaised is not NULL  GROUP BY MonitoringObjectPath ORDER BY AlertCount DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.14" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT  CASE WHEN(GROUPING(CONVERT(VARCHAR(20), TimeAdded, 102)) = 1)  THEN 'All Days' ELSE CONVERT(VARCHAR(20), TimeAdded, 102)  END AS [Date],  CASE WHEN(GROUPING(ResolutionState) = 1)  THEN 'All Resolution States' ELSE CAST(ResolutionState AS VARCHAR(5))  END AS [ResolutionState],  COUNT(*) AS NumAlerts  FROM Alert WITH (NOLOCK)  WHERE TimeRaised is not NULL  GROUP BY CONVERT(VARCHAR(20), TimeAdded, 102), ResolutionState WITH ROLLUP  ORDER BY DATE DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.15" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT CASE WHEN(GROUPING(CONVERT(VARCHAR(20), TimeAdded, 102)) = 1)  THEN 'All Days'  ELSE CONVERT(VARCHAR(20), TimeAdded, 102) END AS DayAdded,  COUNT(*) AS EventsPerDay  FROM EventAllView  GROUP BY CONVERT(VARCHAR(20), TimeAdded, 102) WITH ROLLUP  ORDER BY DayAdded DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.16" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT top 20 Number as EventID,   COUNT(*) AS TotalEvents,  Publishername as EventSource  FROM EventAllView eav with (nolock)  GROUP BY Number, Publishername  ORDER BY TotalEvents DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.17" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT top 20 LoggingComputer as ComputerName,  COUNT(*) AS TotalEvents  FROM EventallView with (NOLOCK)  GROUP BY LoggingComputer  ORDER BY TotalEvents DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.18" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>declare @statedaystokeep INT  SELECT @statedaystokeep = DaysToKeep from PartitionAndGroomingSettings  WHERE ObjectName = 'StateChangeEvent' SELECT COUNT(*) as 'Total StateChanges',  count(CASE WHEN sce.TimeGenerated &gt; dateadd(dd,-@statedaystokeep,getutcdate()) THEN sce.TimeGenerated ELSE NULL END) as 'within grooming retention',  count(CASE WHEN sce.TimeGenerated &lt; dateadd(dd,-@statedaystokeep,getutcdate()) THEN sce.TimeGenerated ELSE NULL END) as '&gt; grooming retention',  count(CASE WHEN sce.TimeGenerated &lt; dateadd(dd,-30,getutcdate()) THEN sce.TimeGenerated ELSE NULL END) as '&gt; 30 days',  count(CASE WHEN sce.TimeGenerated &lt; dateadd(dd,-90,getutcdate()) THEN sce.TimeGenerated ELSE NULL END) as '&gt; 90 days',  count(CASE WHEN sce.TimeGenerated &lt; dateadd(dd,-365,getutcdate()) THEN sce.TimeGenerated ELSE NULL END) as '&gt; 365 days'  from StateChangeEvent sce</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.19" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>SELECT * FROM PartitionAndGroomingSettings WITH (NOLOCK)</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+      <Task ID="Custom.SCOMDBTasks.20" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>select * from InternalJobHistory order by InternalJobHistoryId DESC</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+    </Tasks>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="Custom.SCOMDBTasks.1">
+          <Name>SCOMDB - Performance insertions per day</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.2">
+          <Name>SCOMDB - Top 20 performance insertions by perf object and counter name</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.3">
+          <Name>SCOMDB - State changes per day</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.4">
+          <Name>SCOMDB - Noisiest monitors changing state in the database in the last 7 days</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.5">
+          <Name>SCOMDB - Noisiest Monitor in the database – PER Object/Computer in the last 7 days</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.6">
+          <Name>SCOMDB - List of all monitors in a critical state</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.7">
+          <Name>SCOMDB - Large Table Query</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.8">
+          <Name>SCOMDB - Database Size and used space</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.9">
+          <Name>SCOMDB - Number of console Alerts per Day</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.10">
+          <Name>SCOMDB - Top 20 Alerts in an Operational Database, by Alert Count</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.11">
+          <Name>SCOMDB - Top 20 Alerts in an Operational Database, by Repeat Count</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.12">
+          <Name>SCOMDB - Top 20 Objects generating the most Alerts in an Operational Database, by Repeat Count</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.13">
+          <Name>SCOMDB - Top 20 Objects generating the most Alerts in an Operational Database, by Alert Count</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.14">
+          <Name>SCOMDB - Number of console Alerts per Day by Resolution State</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.15">
+          <Name>SCOMDB - All Events by count by day, with total for entire database</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.16">
+          <Name>SCOMDB - Most common events by event number and event source</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.17">
+          <Name>SCOMDB - Computers generating the most events</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.18">
+          <Name>SCOMDB - How old is StateChange data</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.19">
+          <Name>SCOMDB - Grooming Info</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.20">
+          <Name>SCOMDB - Grooming History</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDB.Tasks">
+          <Name>Custom SCOMDB Tasks</Name>
+          <Description>Agent Tasks to run SQL Queries against the SCOM DB</Description>
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDB.Tasks.PA.Module">
+          <Name>Custom SCOMDB Tasks Probe Action Module</Name>
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDB.Tasks.PA.Module" SubElementID="SQLScript">
+          <Name>SQL Script</Name>
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDB.Tasks.PA.Module" SubElementID="TimeoutSeconds">
+          <Name>Timeout in Seconds</Name>
+        </DisplayString>
+      </DisplayStrings>
+      <KnowledgeArticles></KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPack>

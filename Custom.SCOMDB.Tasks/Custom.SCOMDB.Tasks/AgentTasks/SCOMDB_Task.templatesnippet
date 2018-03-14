@@ -1,0 +1,24 @@
+﻿<ManagementPackFragment SchemaVersion="2.0">
+  <Monitoring>
+    <Tasks>
+      <Task ID="Custom.SCOMDBTasks.#text('Id')#" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="#text('Timeout in Seconds')#" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript><![CDATA[#text('SQL Script')#]]></SQLScript>
+          <TimeoutSeconds>#text('Timeout in Seconds')#</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
+    </Tasks>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack IsDefault="true" ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="Custom.SCOMDBTasks.#text('Id')#">
+          <Name>#text('Display Name')#</Name>
+          <Description/>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
+
