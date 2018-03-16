@@ -1,7 +1,7 @@
 <TemplateGroup DefaultType="AgentTasks\SCOMDB_Task">
   <Instances>
     <Instance ID="Instancee3992b6fbcde484cba606a579ddc7ae3" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         <Substitutions>
           <Substitution Name="Name">PerfInsertsPerDay</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -12,7 +12,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance17f19084f7374d70876f9b5c2d3fa454" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">2</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -22,7 +22,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instancef87dbf1a5cf14c56916c011d1b60c5ed" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">3</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -32,7 +32,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance9bf6378abe754394a5491b6ee7ed36d0" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">4</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -42,7 +42,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance6c0328a5cbfc456caaa639a2e7389a3f" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">5</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -52,7 +52,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance4e336cb8867b4fffa0b70db4071eca53" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">6</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -62,7 +62,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance457f63c7936049b08838bb21d235c948" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">7</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -72,7 +72,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance81567de1652a4fce8b21f861148e6e37" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">8</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -82,7 +82,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instancec129df89bf73400d805b766f3f176c18" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">9</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -92,7 +92,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance10ef01b467d54b62bc9aab3aaf43c80b" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">10</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -102,7 +102,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instancefc9c4952438642f3aa53e32f3b9ecff9" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">11</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -112,7 +112,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instanced1caf9bef33b45febda2282c067ca184" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">12</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -122,7 +122,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instancef6bf6c90a1104c739948a866d21235f2" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">13</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -132,7 +132,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instancec6b9512822c64528bd7f302cb6d55712" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">14</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -142,7 +142,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instancef69d69c4585b4108b6ebcfb7c124f247" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">15</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -152,7 +152,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance2695b0f32cdf438f9a6846069dcdfa49" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">16</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -162,7 +162,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instancef2ef42814067467d838a27fec16f91e0" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">17</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -172,7 +172,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance947f2e3f1af84246b7d2d40e2d4d0c63" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">18</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -182,7 +182,7 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance8ae297d1d21a4d46ac98bae7935cb0fc" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">19</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
@@ -192,12 +192,22 @@
       </SnippetTemplateConfiguration>
     </Instance>
     <Instance ID="Instance7d3d9acbd1ca40b9a31daca031eb2e12" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
-      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <SnippetTemplateConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <Substitutions>
           <Substitution Name="Id">20</Substitution>
           <Substitution Name="Timeout in Seconds">300</Substitution>
           <Substitution Name="SQL Script">select * from InternalJobHistory order by InternalJobHistoryId DESC</Substitution>
           <Substitution Name="Display Name">SCOMDB - Grooming History</Substitution>
+        </Substitutions>
+      </SnippetTemplateConfiguration>
+    </Instance>
+    <Instance ID="Instancebbb8ee9f8f5040078afb66193e9fd222" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.SnippetTemplate" Version="1.0.0.0">
+      <SnippetTemplateConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <Substitutions>
+          <Substitution Name="Id">21</Substitution>
+          <Substitution Name="Timeout in Seconds">300</Substitution>
+          <Substitution Name="SQL Script">select cast(ecl.lastmodified as date) as [LastModifiedDate], datepart(hour, ecl.lastmodified), d.DiscoveryName, lt.LTValue as [DisplayName], min(ecl.lastmodified) as [MINLastModifiedDate], max(ecl.lastmodified) as [MAXLastModifiedDate], count(distinct etl.EntityTransactionLogId) as [TranCount], count(*) as [ChangesCount] from EntityTransactionLog etl  inner join EntityChangeLog ecl on etl.EntityTransactionLogId = ecl.EntityTransactionLogId inner join discoverysource ds on etl.DiscoverySourceId = ds.DiscoverySourceId inner join discovery d on ds.DiscoveryRuleId = d.DiscoveryId inner join LocalizedText lt on d.DiscoveryId = lt.LTStringId where lt.LanguageCode = 'ENU' and lt.LTStringType = 1 group by d.DiscoveryName, lt.LTValue, cast(ecl.lastmodified as date), datepart(hour, ecl.lastmodified)  order by count(*) desc, datepart(hour, ecl.lastmodified) desc</Substitution>
+          <Substitution Name="Display Name">SCOMDB - ConfigChurn</Substitution>
         </Substitutions>
       </SnippetTemplateConfiguration>
     </Instance>

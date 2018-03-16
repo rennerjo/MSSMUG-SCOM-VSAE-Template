@@ -6,7 +6,7 @@
     <RootNamespace>Custom.SCOMDB.Tasks</RootNamespace>
     <Name>Custom.SCOMDB.Tasks</Name>
     <ManagementPackName>Custom.SCOMDB.Tasks</ManagementPackName>
-    <Version>1.0.0.7</Version>
+    <Version>1.0.0.9</Version>
     <MpFrameworkVersion>v7.0.3</MpFrameworkVersion>
     <MpFrameworkProfile>OM</MpFrameworkProfile>
     <ProductVersion>1.1.0.0</ProductVersion>

@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>Custom.SCOMDB.Tasks</ID>
-      <Version>1.0.0.7</Version>
+      <Version>1.0.0.9</Version>
     </Identity>
     <Name>Custom.SCOMDB.Tasks</Name>
     <References>
@@ -243,6 +243,13 @@ else
           <TimeoutSeconds>300</TimeoutSeconds>
         </ProbeAction>
       </Task>
+      <Task ID="Custom.SCOMDBTasks.21" Accessibility="Public" Target="SC!Microsoft.SystemCenter.ManagementServer" Enabled="true" Timeout="300" Remotable="true">
+        <Category>Operations</Category>
+        <ProbeAction TypeID="Custom.SCOMDB.Tasks.PA.Module" ID="Custom.SCOMDB.Tasks.ProbeAction">
+          <SQLScript>select cast(ecl.lastmodified as date) as [LastModifiedDate], datepart(hour, ecl.lastmodified), d.DiscoveryName, lt.LTValue as [DisplayName], min(ecl.lastmodified) as [MINLastModifiedDate], max(ecl.lastmodified) as [MAXLastModifiedDate], count(distinct etl.EntityTransactionLogId) as [TranCount], count(*) as [ChangesCount] from EntityTransactionLog etl  inner join EntityChangeLog ecl on etl.EntityTransactionLogId = ecl.EntityTransactionLogId inner join discoverysource ds on etl.DiscoverySourceId = ds.DiscoverySourceId inner join discovery d on ds.DiscoveryRuleId = d.DiscoveryId inner join LocalizedText lt on d.DiscoveryId = lt.LTStringId where lt.LanguageCode = 'ENU' and lt.LTStringType = 1 group by d.DiscoveryName, lt.LTValue, cast(ecl.lastmodified as date), datepart(hour, ecl.lastmodified)  order by count(*) desc, datepart(hour, ecl.lastmodified) desc</SQLScript>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </ProbeAction>
+      </Task>
     </Tasks>
   </Monitoring>
   <LanguagePacks>
@@ -326,6 +333,10 @@ else
         </DisplayString>
         <DisplayString ElementID="Custom.SCOMDBTasks.20">
           <Name>SCOMDB - Grooming History</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="Custom.SCOMDBTasks.21">
+          <Name>SCOMDB - ConfigChurn</Name>
           <Description />
         </DisplayString>
         <DisplayString ElementID="Custom.SCOMDB.Tasks">
